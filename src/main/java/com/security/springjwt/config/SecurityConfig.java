@@ -1,5 +1,6 @@
 package com.security.springjwt.config;
 
+import com.security.springjwt.jwt.JWTUtil;
 import com.security.springjwt.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,10 +20,12 @@ public class SecurityConfig {
 
 	//AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
 	private final AuthenticationConfiguration authenticationConfiguration;
+	private final JWTUtil jwtUtil;
 
-	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
 
 		this.authenticationConfiguration = authenticationConfiguration;
+		this.jwtUtil = jwtUtil;
 	}
 
 
@@ -42,15 +46,15 @@ public class SecurityConfig {
 
 		//csrf disabled
 		http
-				.csrf ((auth) -> auth.disable ());
+				.csrf (AbstractHttpConfigurer::disable);
 
 		//form login disabled
 		http
-				.formLogin ((auth) -> auth.disable ());
+				.formLogin (AbstractHttpConfigurer::disable);
 
 		//http basic disabled
 		http
-				.httpBasic ((auth) -> auth.disable ());
+				.httpBasic (AbstractHttpConfigurer::disable);
 
 		// 경로별 인가작업
 		http
@@ -61,7 +65,7 @@ public class SecurityConfig {
 
 		//로그인 필터 추가
 		http
-				.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+				.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		// 세션 설정
 		http
