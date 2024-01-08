@@ -16,48 +16,41 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 	private final JWTUtil jwtUtil;
 
-	public JWTFilter (JWTUtil jwtUtil) {
+	public JWTFilter(JWTUtil jwtUtil) {
 		this.jwtUtil = jwtUtil;
 	}
 
 	@Override
-	protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-		String authoerization = request.getHeader ("Authorization");
+		String authorization = request.getHeader("Authorization");
 
-		//Authoerization 검증
-		if (authoerization == null || !authoerization.startsWith ("Bearer ")) {
-			filterChain.doFilter (request, response);
+		if (authorization == null || !authorization.startsWith("Bearer ")) {
+			filterChain.doFilter(request, response);
+			System.out.println ("인증필터");
 			return;
 		}
 
-		//순수 토큰만 획득
-		String token = authoerization.split (" ")[1];
+		String token = authorization.split(" ")[1];
 
-		//토큰 소멸시간 검증
-		if (jwtUtil.isExpired (token)) {
-			filterChain.doFilter (request, response);
+		if (jwtUtil.isExpired(token)) {
+			filterChain.doFilter(request, response);
 			return;
 		}
 
-		//토큰에서 username과 role 획득
-		String username = jwtUtil.getUsername (token);
-		String role = jwtUtil.getRole (token);
+		String username = jwtUtil.getUsername(token);
+		String role = jwtUtil.getRole(token);
 
-		//userEntity를 생성하여 값 set
-		UserEntity userEntity = new UserEntity ();
-		userEntity.setUsername (username);
-		//임시비밀번호
-		userEntity.setPassword ("temppassword");
-		userEntity.setRole (role);
+		UserEntity userEntity = new UserEntity();
+		userEntity.setUsername(username);
+		userEntity.setPassword("temppassword");  // 임시 비밀번호
+		userEntity.setRole(role);
 
-		CustomUserDetails customUserDetails = new CustomUserDetails (userEntity);
-		Authentication authToken = new UsernamePasswordAuthenticationToken (customUserDetails, null, customUserDetails.getAuthorities ());
+		CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 
-
-		//세션에 사용자 등록
-		SecurityContextHolder.getContext ().setAuthentication (authToken);
-
-		filterChain.doFilter (request, response);
+		SecurityContextHolder.getContext().setAuthentication(authToken);
+		filterChain.doFilter(request, response);
 	}
 }
+

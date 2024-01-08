@@ -19,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-	//AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final JWTUtil jwtUtil;
 
@@ -29,8 +28,6 @@ public class SecurityConfig {
 		this.jwtUtil = jwtUtil;
 	}
 
-
-	//AuthenticationManager Bean 등록
 	@Bean
 	public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
@@ -45,32 +42,34 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
 
-		//csrf disabled
 		http
 				.csrf (AbstractHttpConfigurer::disable);
 
-		//form login disabled
 		http
-				.formLogin (AbstractHttpConfigurer::disable);
+				.formLogin (form -> form
+						.loginPage ("/login")
+						.usernameParameter ("username")
+						.passwordParameter ("password")
+						.loginProcessingUrl("/login")
+						.permitAll ()
+				);
 
-		//http basic disabled
 		http
 				.httpBasic (AbstractHttpConfigurer::disable);
 
-		// 경로별 인가작업
 		http
 				.authorizeHttpRequests ((auth) -> auth
-						.requestMatchers ("/login", "/", "/join").permitAll ()
+						.requestMatchers ("/LoginPage/*", "/", "/join", "/login", "/main").permitAll ()
 						.requestMatchers ("/admin").hasRole ("ADMIN")
 						.anyRequest ().authenticated ());
 
+		System.out.println ("인가작업 통과");
 		http
 				.addFilterBefore (new JWTFilter (jwtUtil), LoginFilter.class);
-		//로그인 필터 추가
+
 		http
 				.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-		// 세션 설정
 		http
 				.sessionManagement ((auth) -> auth
 						.sessionCreationPolicy (SessionCreationPolicy.STATELESS));

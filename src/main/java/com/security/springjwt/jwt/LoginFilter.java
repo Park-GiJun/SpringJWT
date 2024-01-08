@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -31,19 +32,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String username = obtainUsername (request);
 		String password = obtainPassword (request);
 
-		System.out.println ("username: " + username + ", password: " + password);
-
-		// username과 password를 검증하기 위해서 Token에 넣어서 보내줌
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken (username, password, null);
 
-		//token에 담은 검증을 위한 manager로 전달한후 검증 ( DB에서 회원 정보를 받아와서 검증 진행)
 		return authManager.authenticate (authToken);
 	}
 
-
-	//로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
 	@Override
-	protected void successfulAuthentication (HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+	protected void successfulAuthentication (HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal ();
 
 		String username = customUserDetails.getUsername ();
@@ -53,11 +48,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		String role = auth.getAuthority ();
 
-		//username과 role을 이용해서 Token생성
 		String token = jwtUtil.createJWT (username, role, 60*60*10L);
 
-		//접두사를 붙이고 한칸을 띄워줘야함
+		System.out.println ("로그인 성공 " + token);
+
 		response.addHeader ("Authorization", "Bearer " + token);
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write("{\"token\":\"" + token + "\"}");
 	}
 
 	//로그인 실패시 실행하는 메소드

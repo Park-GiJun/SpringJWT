@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Please Log In</title>
+</head>
+<body>
+<h1>Please Log In</h1>
+<div th:if="${param.error}">
+    Invalid username and password.
+</div>
+<div th:if="${param.logout}">
+    You have been logged out.
+</div>
+<form id="loginForm">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button type="submit" onclick="login()">로그인</button>
+</form>
+<button type="button" onclick="accessProtectedResource()">접근확인</button>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        login();
+    });
+
+    function login() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('로그인 실패');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const token = data.token;
+                localStorage.setItem('jwtToken', token);
+                console.log('로그인 성공, 토큰:', token);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function accessProtectedResource() {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        fetch('/main', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('접근 권한이 없습니다.');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
+</body>
+</html>
