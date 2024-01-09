@@ -60,15 +60,14 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests ((auth) -> auth
 						.requestMatchers ("/LoginPage/*", "/", "/join", "/login").permitAll ()
-						.requestMatchers ("/main").hasAnyRole ()
-						.requestMatchers ("/main").hasRole ("USER")
-						.requestMatchers ("/admin", "/main").hasRole ("ADMIN")
+						.requestMatchers ("/main").hasAnyRole ("USER", "ADMIN")
+						.requestMatchers ("/user").hasRole ("USER")
+						.requestMatchers ("/admin").hasRole ("ADMIN")
 						.anyRequest ().authenticated ());
 
 		http
 				.logout (logout -> logout
-						.deleteCookies ("jwtToken")
-						.logoutSuccessUrl ("/"));
+						.deleteCookies ("jwtToken"));
 
 		System.out.println ("인가작업 통과");
 		http

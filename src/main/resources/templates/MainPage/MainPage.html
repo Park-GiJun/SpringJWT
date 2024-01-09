@@ -10,8 +10,9 @@
     <li><a>이름</a></li>
     <li><a>역할</a></li>
 </ul>
-<button type="button" onclick="logout()">로그아웃</button>
-<button type="button" onclick="adminPage()">관리자페이지</button>
+<button type="button" onclick="logout()">로그 아웃</button>
+<button type="button" onclick="adminPage()">관리자 페이지</button>
+<button type="button" onclick="userPage()">사용자 페이지</button>
 </body>
 <script>
     function logout() {
@@ -22,6 +23,12 @@
 
     function adminPage(){
         fetch('/admin',{
+            method:'POST'
+        })
+    }
+
+    function userPage(){
+        fetch('/user',{
             method:'POST'
         })
     }
