@@ -1,15 +1,13 @@
 package com.security.springjwt.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 public class AdminController {
 
-	@GetMapping("/admin")
+	@PostMapping("/admin")
 	public String adminP(){
-		return "admin controller";
+		return "/AdminPage/AdminPage";
 	}
 }

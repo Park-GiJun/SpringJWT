@@ -22,7 +22,7 @@ public class SecurityConfig {
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final JWTUtil jwtUtil;
 
-	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+	public SecurityConfig (AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
 
 		this.authenticationConfiguration = authenticationConfiguration;
 		this.jwtUtil = jwtUtil;
@@ -50,7 +50,7 @@ public class SecurityConfig {
 						.loginPage ("/login")
 						.usernameParameter ("username")
 						.passwordParameter ("password")
-						.loginProcessingUrl("/login")
+						.loginProcessingUrl ("/login")
 						.permitAll ()
 				);
 
@@ -59,16 +59,23 @@ public class SecurityConfig {
 
 		http
 				.authorizeHttpRequests ((auth) -> auth
-						.requestMatchers ("/LoginPage/*", "/", "/join", "/login", "/main").permitAll ()
-						.requestMatchers ("/admin").hasRole ("ADMIN")
+						.requestMatchers ("/LoginPage/*", "/", "/join", "/login").permitAll ()
+						.requestMatchers ("/main").hasAnyRole ()
+						.requestMatchers ("/main").hasRole ("USER")
+						.requestMatchers ("/admin", "/main").hasRole ("ADMIN")
 						.anyRequest ().authenticated ());
+
+		http
+				.logout (logout -> logout
+						.deleteCookies ("jwtToken")
+						.logoutSuccessUrl ("/"));
 
 		System.out.println ("인가작업 통과");
 		http
 				.addFilterBefore (new JWTFilter (jwtUtil), LoginFilter.class);
 
 		http
-				.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+				.addFilterAt (new LoginFilter (authenticationManager (authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		http
 				.sessionManagement ((auth) -> auth

@@ -14,9 +14,16 @@ import java.util.Iterator;
 @Controller
 public class MainController {
 
+	private final String MAIN_PAGE = "/MainPage/MainPage";
+
 	@GetMapping("/main")
-	public ModelAndView mainPage() {
-		System.out.println("Getting /main");
+	public String mainPage() {
+		return MAIN_PAGE;
+	}
+
+	@GetMapping("/main/info")
+	public ModelAndView mainInfo() {
+		System.out.println("Getting /main/info");
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
@@ -30,10 +37,11 @@ public class MainController {
 		checkDTO.setUsername(currentPrincipalName);
 		checkDTO.setRole(role);
 
-		ModelAndView model = new ModelAndView();
-		model.addObject("checkDTO", checkDTO);
-		model.setViewName("MainPage/MainPage");
+		System.out.println ("DTO : "  + checkDTO);
 
-		return model;
+		ModelAndView modelAndView = new ModelAndView(MAIN_PAGE);
+		modelAndView.addObject("checkDTO", checkDTO);
+
+		return modelAndView;
 	}
 }

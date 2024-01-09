@@ -4,6 +4,7 @@ import com.security.springjwt.dto.CustomUserDetails;
 import com.security.springjwt.entity.UserEntity;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class JWTFilter extends OncePerRequestFilter {
 	private final JWTUtil jwtUtil;
@@ -23,15 +25,24 @@ public class JWTFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-		String authorization = request.getHeader("Authorization");
+		String token = null;
 
-		if (authorization == null || !authorization.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			System.out.println ("인증필터");
-			return;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("jwtToken".equals(cookie.getName())) {
+					token = cookie.getValue();
+					break;
+				}
+			}
 		}
 
-		String token = authorization.split(" ")[1];
+		System.out.println ("token: " + token);
+
+		if (token == null || jwtUtil.isExpired(token)) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		if (jwtUtil.isExpired(token)) {
 			filterChain.doFilter(request, response);
@@ -40,6 +51,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		String username = jwtUtil.getUsername(token);
 		String role = jwtUtil.getRole(token);
+
+		System.out.println ("username: " + username + " role: " + role);
 
 		UserEntity userEntity = new UserEntity();
 		userEntity.setUsername(username);

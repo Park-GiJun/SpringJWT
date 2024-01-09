@@ -16,7 +16,7 @@
     <input type="password" id="password" placeholder="Password">
     <button type="submit" onclick="login()">로그인</button>
 </form>
-<button type="button" onclick="accessProtectedResource()">접근확인</button>
+<button type="button" onclick="accessMainPage()">접근확인</button>
 
 <script>
     document.getElementById('loginForm').addEventListener('submit', function (event) {
@@ -42,39 +42,27 @@
                 return response.json();
             })
             .then(data => {
-                const token = data.token;
-                localStorage.setItem('jwtToken', token);
-                console.log('로그인 성공, 토큰:', token);
+                const cookieToken = data.token;
+                setCookie('jwtToken', cookieToken, 1);
+                console.log('로그인 성공, 토큰:', cookieToken);
             })
             .catch(error => {
                 console.error('Error:', error);
             });
     }
 
-    function accessProtectedResource() {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) {
-            alert('로그인이 필요합니다.');
-            return;
+    function accessMainPage() {
+        window.location.href = '/main'; // 서버에서 처리된 페이지로 리디렉션
+    }
+
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
         }
-        fetch('/main', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('접근 권한이 없습니다.');
-                }
-                return response.text();
-            })
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
 </script>
 </body>
