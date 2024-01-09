@@ -17,6 +17,7 @@
     <button type="submit" onclick="login()">로그인</button>
 </form>
 <button type="button" onclick="accessMainPage()">접근확인</button>
+<button type="button" onclick="joinPage()">회원가입</button>
 
 <script>
     document.getElementById('loginForm').addEventListener('submit', function (event) {
@@ -63,6 +64,10 @@
             expires = "; expires=" + date.toUTCString();
         }
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function joinPage(){
+        window.location.href = '/join';
     }
 </script>
 </body>

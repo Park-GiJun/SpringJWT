@@ -50,7 +50,6 @@ public class SecurityConfig {
 						.loginPage ("/login")
 						.usernameParameter ("username")
 						.passwordParameter ("password")
-						.loginProcessingUrl ("/login")
 						.permitAll ()
 				);
 
@@ -59,7 +58,7 @@ public class SecurityConfig {
 
 		http
 				.authorizeHttpRequests ((auth) -> auth
-						.requestMatchers ("/LoginPage/*", "/", "/join", "/login").permitAll ()
+						.requestMatchers ("/LoginPage/*", "/", "/join", "/login","/favicon.ico").permitAll ()
 						.requestMatchers ("/main").hasAnyRole ("USER", "ADMIN")
 						.requestMatchers ("/user").hasRole ("USER")
 						.requestMatchers ("/admin").hasRole ("ADMIN")
@@ -69,7 +68,6 @@ public class SecurityConfig {
 				.logout (logout -> logout
 						.deleteCookies ("jwtToken"));
 
-		System.out.println ("인가작업 통과");
 		http
 				.addFilterBefore (new JWTFilter (jwtUtil), LoginFilter.class);
 

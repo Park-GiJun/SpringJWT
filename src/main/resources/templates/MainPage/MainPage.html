@@ -21,15 +21,19 @@
         })
     }
 
-    function adminPage(){
-        fetch('/admin',{
-            method:'POST'
-        })
+    function adminPage() {
+        fetch('/admin', {
+            method: 'GET'
+        }).then(response => {
+            if (response.ok && response.redirected) {
+                window.location.href = response.url;
+            }
+        });
     }
 
     function userPage(){
         fetch('/user',{
-            method:'POST'
+            method:'GET'
         })
     }
 </script>

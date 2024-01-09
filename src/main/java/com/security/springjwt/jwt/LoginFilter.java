@@ -50,7 +50,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		String token = jwtUtil.createJWT (username, role, 60*60*10L);
 
-		System.out.println ("로그인 성공 " + token);
+		System.out.println ("로그인 성공 : " + token);
 
 		response.addHeader ("Authorization", "Bearer " + token);
 		response.setContentType("application/json");

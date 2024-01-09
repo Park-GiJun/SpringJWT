@@ -18,11 +18,12 @@ public class MainController {
 
 	@GetMapping("/main")
 	public String mainPage() {
+		System.out.println ("Getting /main");
 		return MAIN_PAGE;
 	}
 
 	@GetMapping("/main/info")
-	public ModelAndView mainInfo() {
+	public String mainInfo() {
 		System.out.println("Getting /main/info");
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,6 +43,6 @@ public class MainController {
 		ModelAndView modelAndView = new ModelAndView(MAIN_PAGE);
 		modelAndView.addObject("checkDTO", checkDTO);
 
-		return modelAndView;
+		return MAIN_PAGE;
 	}
 }
