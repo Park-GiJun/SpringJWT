@@ -16,9 +16,6 @@
     <input type="password" id="password" placeholder="Password">
     <button type="submit" onclick="login()">로그인</button>
 </form>
-<button type="button" onclick="accessMainPage()">접근확인</button>
-<button type="button" onclick="joinPage()">회원가입</button>
-
 <script>
     document.getElementById('loginForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -43,17 +40,17 @@
                 return response.json();
             })
             .then(data => {
+                console.log(data);
                 const cookieToken = data.token;
                 setCookie('jwtToken', cookieToken, 1);
                 console.log('로그인 성공, 토큰:', cookieToken);
             })
+            .then(() =>
+                window.location.href = '/main'
+            )
             .catch(error => {
                 console.error('Error:', error);
             });
-    }
-
-    function accessMainPage() {
-        window.location.href = '/main'; // 서버에서 처리된 페이지로 리디렉션
     }
 
     function setCookie(name, value, days) {
@@ -64,10 +61,6 @@
             expires = "; expires=" + date.toUTCString();
         }
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    }
-
-    function joinPage(){
-        window.location.href = '/join';
     }
 </script>
 </body>

@@ -50,6 +50,7 @@ public class SecurityConfig {
 						.loginPage ("/login")
 						.usernameParameter ("username")
 						.passwordParameter ("password")
+						.successForwardUrl ("/MainPage/MainPage")
 						.permitAll ()
 				);
 

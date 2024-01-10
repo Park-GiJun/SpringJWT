@@ -4,6 +4,7 @@ import com.security.springjwt.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
+@Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final AuthenticationManager authManager;
@@ -28,12 +30,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	public Authentication attemptAuthentication (HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-		//username, password를 가져옴
 		String username = obtainUsername (request);
 		String password = obtainPassword (request);
-
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken (username, password, null);
-
 		return authManager.authenticate (authToken);
 	}
 
@@ -48,14 +47,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		String role = auth.getAuthority ();
 
-		String token = jwtUtil.createJWT (username, role, 60*60*10L);
+		String token = jwtUtil.createJWT (username, role, 60 * 60 * 10L);
 
-		System.out.println ("로그인 성공 : " + token);
-
+		log.info (" successfulAuthentication // token: " + token);
 		response.addHeader ("Authorization", "Bearer " + token);
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write("{\"token\":\"" + token + "\"}");
+		response.setContentType ("application/json");
+		response.setCharacterEncoding ("UTF-8");
+		response.getWriter ().write ("{\"token\":\"" + token + "\"}");
 	}
 
 	//로그인 실패시 실행하는 메소드

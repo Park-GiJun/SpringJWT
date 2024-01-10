@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 	private final JWTUtil jwtUtil;
 
@@ -23,7 +25,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		System.out.println ("do Internal");
+		log.info ("doFilterInternal");
 		String token = null;
 
 		Cookie[] cookies = request.getCookies ();
@@ -35,15 +37,9 @@ public class JWTFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-
-		System.out.println ("token: " + token);
+		log.info ("doFilterInternal // token: " + token);
 
 		if (token == null || jwtUtil.isExpired (token)) {
-			filterChain.doFilter (request, response);
-			return;
-		}
-
-		if (jwtUtil.isExpired (token)) {
 			filterChain.doFilter (request, response);
 			return;
 		}
@@ -51,7 +47,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		String username = jwtUtil.getUsername (token);
 		String role = jwtUtil.getRole (token);
 
-		System.out.println ("username: " + username + " role: " + role);
+		log.info ("doFilterInternal // username: " + username + " role: " + role);
 
 		UserEntity userEntity = new UserEntity ();
 		userEntity.setUsername (username);

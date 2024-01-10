@@ -7,8 +7,8 @@
 <body>
 <h2>Main</h2>
 <ul>
-    <li><a>이름</a></li>
-    <li><a>역할</a></li>
+    <li><a th:text="${checkDTO.getUsername()}">이름</a></li>
+    <li><a th:text="${checkDTO.getRole()}">역할</a></li>
 </ul>
 <button type="button" onclick="logout()">로그 아웃</button>
 <button type="button" onclick="adminPage()">관리자 페이지</button>
@@ -24,11 +24,7 @@
     function adminPage() {
         fetch('/admin', {
             method: 'GET'
-        }).then(response => {
-            if (response.ok && response.redirected) {
-                window.location.href = response.url;
-            }
-        });
+        })
     }
 
     function userPage(){
