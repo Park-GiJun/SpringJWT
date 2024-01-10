@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="ko">
 <head>
     <title>Please Log In</title>
 </head>
@@ -12,8 +12,8 @@
     You have been logged out.
 </div>
 <form id="loginForm">
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
+    <label for="username"></label><input type="text" id="username" placeholder="Username">
+    <label for="password"></label><input type="password" id="password" placeholder="Password">
     <button type="submit" onclick="login()">로그인</button>
 </form>
 <script>
@@ -23,8 +23,8 @@
     });
 
     function login() {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
 
         fetch('/login', {
             method: 'POST',
@@ -54,9 +54,9 @@
     }
 
     function setCookie(name, value, days) {
-        var expires = "";
+        let expires = "";
         if (days) {
-            var date = new Date();
+            const date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             expires = "; expires=" + date.toUTCString();
         }

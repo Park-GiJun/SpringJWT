@@ -28,6 +28,8 @@ public class JWTFilter extends OncePerRequestFilter {
 		log.info ("doFilterInternal");
 		String token = null;
 
+
+
 		Cookie[] cookies = request.getCookies ();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {

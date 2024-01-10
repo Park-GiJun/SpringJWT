@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -22,15 +22,11 @@
     }
 
     function adminPage() {
-        fetch('/admin', {
-            method: 'GET'
-        })
+        window.location.href='/admin';
     }
 
     function userPage(){
-        fetch('/user',{
-            method:'GET'
-        })
+        window.location.href = '/user';
     }
 </script>
 </html>
