@@ -4,6 +4,7 @@ import com.security.springjwt.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-@Slf4j
+@Log4j2
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final AuthenticationManager authManager;
@@ -38,6 +39,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	@Override
 	protected void successfulAuthentication (HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
+		if (log.isInfoEnabled ()) {
+			log.info ("Authentication successful");
+		}
 		CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal ();
 
 		String username = customUserDetails.getUsername ();

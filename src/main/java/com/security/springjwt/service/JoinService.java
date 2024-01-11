@@ -3,10 +3,13 @@ package com.security.springjwt.service;
 import com.security.springjwt.dto.JoinDTO;
 import com.security.springjwt.entity.UserEntity;
 import com.security.springjwt.repository.UserRepository;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 public class JoinService {
 
 	private final UserRepository userRepository;
@@ -18,7 +21,8 @@ public class JoinService {
 	}
 
 	public void joinProcess(JoinDTO joinDTO){
-		String username = joinDTO.getUsername();
+		log.info ("joinProcess");
+		String username = joinDTO .getUsername();
 		String password = joinDTO.getPassword();
 
 		Boolean isExist = userRepository.existsByUsername(username);
@@ -31,7 +35,7 @@ public class JoinService {
 
 		data.setUsername(username);
 		data.setPassword(bcryptPasswordEncoder.encode (password));
-		data.setRole ("ROLE_ADMIN");
+		data.setRole ("ROLE_USER");
 
 		userRepository.save (data);
 	}

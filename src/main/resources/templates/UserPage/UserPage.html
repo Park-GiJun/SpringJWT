@@ -1,10 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>사용자 게시판</title>
 </head>
 <body>
-<h2>사용자 페이지</h2>
+<h1>사용자 게시판</h1>
+<div th:if="${boardList.isEmpty()}">
+    <p>게시물이 없습니다.</p>
+</div>
+<div th:unless="${boardList.isEmpty()}">
+    <table>
+        <thead>
+        <tr>
+            <th>Index</th>
+            <th>Title</th>
+            <th>Writer</th>
+            <th>Date</th>
+            <th>Work</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${boardList}">
+            <td th:text="${post.id}">1</td>
+            <td th:text="${post.title}">게시글 제목</td>
+            <td th:text="${post.username}">작성자</td>
+            <td th:text="${post.date}">작성일</td>
+            <td>
+                <a th:href="@{/user/view/{id}(id=${post.id})}">보기</a>
+                <a th:href="@{/user/edit/{id}(id=${post.id})}">수정</a>
+                <a th:href="@{/user/delete/{id}(id=${post.id})}" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+            </td>
+        </tr>
+        <tr>
+            <td><button type="button" onclick="writePage()">Write</button></td>
+            <td><button type="button" onclick="mainPage()">Main</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    function mainPage() {
+        window.location.href = '/main';
+    }
+
+    function writePage() {
+        window.location.href = '/user/write';
+    }
+</script>
 </body>
 </html>

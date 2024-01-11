@@ -1,5 +1,6 @@
 package com.security.springjwt.config;
 
+import com.security.springjwt.handler.CustomAccessDeniedHandler;
 import com.security.springjwt.jwt.JWTFilter;
 import com.security.springjwt.jwt.JWTUtil;
 import com.security.springjwt.jwt.LoginFilter;
@@ -22,10 +23,13 @@ public class SecurityConfig {
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final JWTUtil jwtUtil;
 
-	public SecurityConfig (AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
+	public SecurityConfig (AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomAccessDeniedHandler customAccessDeniedHandler) {
 
 		this.authenticationConfiguration = authenticationConfiguration;
 		this.jwtUtil = jwtUtil;
+		this.customAccessDeniedHandler = customAccessDeniedHandler;
 	}
 
 	@Bean
@@ -58,7 +62,7 @@ public class SecurityConfig {
 
 		http
 				.authorizeHttpRequests ((auth) -> auth
-						.requestMatchers ("/LoginPage/*", "/", "/join", "/login","/favicon.ico").permitAll ()
+						.requestMatchers ( "/", "/login/**","/favicon.ico","/register/**").permitAll ()
 						.requestMatchers ("/main").hasAnyRole ("USER", "ADMIN")
 						.requestMatchers ("/user").hasRole ("USER")
 						.requestMatchers ("/admin").hasRole ("ADMIN")
@@ -75,9 +79,12 @@ public class SecurityConfig {
 				.addFilterAt (new LoginFilter (authenticationManager (authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		http
+				.exceptionHandling (auth -> auth
+						.accessDeniedHandler (customAccessDeniedHandler));
+
+		http
 				.sessionManagement ((auth) -> auth
 						.sessionCreationPolicy (SessionCreationPolicy.STATELESS));
 		return http.build ();
 	}
-
 }

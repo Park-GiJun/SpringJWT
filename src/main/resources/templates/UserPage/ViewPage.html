@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View</title>
+</head>
+<body>
+<h1 th:text="${board.title}"></h1>
+<p th:text="${board.username}"></p>
+<p th:text="${board.date}"></p>
+<p th:text="${board.content}"></p>
+<button type="button" onclick="main()">list</button>
+<script>
+    function main() {
+        window.location.href = '/user';
+    }
+</script>
+</body>
+</html>

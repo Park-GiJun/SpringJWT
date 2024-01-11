@@ -7,12 +7,12 @@
 <body>
 <h2>Main</h2>
 <ul>
-    <li><a th:text="${checkDTO.getUsername()}">이름</a></li>
-    <li><a th:text="${checkDTO.getRole()}">역할</a></li>
+    <li><a th:text="${checkDTO.getUsername()}">name</a></li>
+    <li><a th:text="${checkDTO.getRole()}">role</a></li>
 </ul>
-<button type="button" onclick="logout()">로그 아웃</button>
-<button type="button" onclick="adminPage()">관리자 페이지</button>
-<button type="button" onclick="userPage()">사용자 페이지</button>
+<button type="button" onclick="logout()">Logout</button>
+<button type="button" onclick="adminPage()">Admin Page</button>
+<button type="button" onclick="userPage()">User Page</button>
 </body>
 <script>
     function logout() {

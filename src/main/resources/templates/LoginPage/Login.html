@@ -14,9 +14,9 @@
 <form id="loginForm">
     <label for="username"></label><input type="text" id="username" placeholder="Username">
     <label for="password"></label><input type="password" id="password" placeholder="Password">
-    <button type="submit" onclick="login()">로그인</button>
+    <button type="submit" onclick="login()">Login</button>
 </form>
-<script>
+<button type="button" onclick="register()">Register</button><script>
     document.getElementById('loginForm').addEventListener('submit', function (event) {
         event.preventDefault();
         login();
@@ -51,6 +51,10 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+    }
+
+    function register() {
+        window.location.href = '/register';
     }
 
     function setCookie(name, value, days) {
