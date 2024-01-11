@@ -26,9 +26,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal (HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		if (log.isInfoEnabled ()) {
-			log.info ("doFilterInternal");
-		}
 		String token = null;
 
 		Cookie[] cookies = request.getCookies ();
@@ -40,17 +37,15 @@ public class JWTFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-		log.info ("doFilterInternal // token: " + token);
 
 		if (token == null || jwtUtil.isExpired (token)) {
+			log.error ("token is null");
 			filterChain.doFilter (request, response);
 			return;
 		}
 
 		String username = jwtUtil.getUsername (token);
 		String role = jwtUtil.getRole (token);
-
-		log.info ("doFilterInternal // username: " + username + " role: " + role);
 
 		UserEntity userEntity = new UserEntity ();
 		userEntity.setUsername (username);

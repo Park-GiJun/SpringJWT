@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+</head>
+<body>
+<form th:action="@{/user/editPost/{id}(id=${board.id})}" method="post">
+    <label>
+        <input type="text" th:value="${board.title}" name="title"></input>
+    </label>
+    <label>
+        <textarea th:text="${board.content}" name="content"></textarea>
+    </label>
+    <button type="submit">Save Changes</button>
+</form>
+<button type="button" onclick="main()">List</button>
+<script>
+    function main() {
+        window.location.href = '/user';
+    }
+</script>
+</body>
+</html>

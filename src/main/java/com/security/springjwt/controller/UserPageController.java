@@ -22,6 +22,7 @@ public class UserPageController {
 	private final String USER_PAGE = "/UserPage/UserPage";
 	private final String WRITE_PAGE = "/UserPage/WritePage";
 	private final String DETAIL_PAGE = "/UserPage/ViewPage";
+	private final String EDIT_PAGE = "/UserPage/EditPage";
 	private final BoardService boardService;
 
 	public UserPageController (BoardService boardService) {
@@ -59,7 +60,7 @@ public class UserPageController {
 		boardDTO.setWriter (currentPrincipalName);
 		boardDTO.setDate (currentDate);
 		log.warn (boardDTO.toString ());
-		boardService.savePost (boardService.dtoToEntity (boardDTO));
+		boardService.savePost (boardService.dtoToEntityWrite (boardDTO));
 		return userPage ();
 	}
 
@@ -75,11 +76,36 @@ public class UserPageController {
 	@GetMapping("/view/{id}")
 	public ModelAndView viewPost (@PathVariable Long id) {
 		if (log.isInfoEnabled ()) {
-            log.info ("editPost Get");
+            log.info ("viewPost Get");
         }
         ModelAndView modelAndView = new ModelAndView (DETAIL_PAGE);
         BoardEntity boardEntity = boardService.BoardFindById (id);
         modelAndView.addObject ("board", boardEntity);
         return modelAndView;
+	}
+
+	@GetMapping("/edit/{id}")
+	public ModelAndView editPost (@PathVariable Long id) {
+		if (log.isInfoEnabled ()) {
+			log.info ("editPost Get");
+		}
+		ModelAndView modelAndView = new ModelAndView (EDIT_PAGE);
+		BoardEntity boardEntity = boardService.BoardFindById (id);
+		modelAndView.addObject ("board", boardEntity);
+		return modelAndView;
+	}
+
+
+	@PostMapping("/editPost/{id}")
+	public ModelAndView editPost (@PathVariable Long id, BoardDTO boardDTO) {
+		if (log.isInfoEnabled ()) {
+            log.info ("editPost Post" + id);
+        }
+
+		BoardEntity boardEntity = boardService.dtoToEntityEdit (boardDTO);
+
+		boardService.updatePostById (id, boardEntity);
+
+		return viewPost (id);
 	}
 }
